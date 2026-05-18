@@ -1,0 +1,15 @@
+# dependencies
+node_modules
+backend/node_modules
+frontend/node_modules
+
+# build outputs
+dist
+build
+
+# env files
+.env
+.env.local
+
+# system files
+.DS_Store

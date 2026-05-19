@@ -5,17 +5,19 @@ import express from "express";
 import cors from "cors";
 
 import connectDB from "./config/db";
+
 import taskRoutes from "./routes/taskRoutes";
 import aiRoutes from "./routes/aiRoutes";
 import emailRoutes from "./routes/emailRoutes";
 import analyticsRoutes from "./routes/analyticsRoutes";
 import voiceRoutes from "./routes/voiceRoutes";
+import authRoutes from "./routes/authRoutes"; // ✅ ONLY THIS ONE
+
 import { startReminderService } from "./services/reminderService";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
@@ -26,12 +28,14 @@ app.use("/api/email", emailRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/voice", voiceRoutes);
 
+// AUTH
+app.use("/api/auth", authRoutes);
+
 // Health check
 app.get("/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
-// Start server
 const startServer = async () => {
   try {
     await connectDB();

@@ -7,7 +7,6 @@
     "strict": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
-    "types": ["node"],
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "ignoreDeprecations": "6.0"

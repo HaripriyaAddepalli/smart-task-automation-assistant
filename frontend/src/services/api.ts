@@ -18,6 +18,9 @@ export interface Task {
 }
 
 export const getTasks = () => api.get<Task[]>('/tasks');
-export const createTask = (taskData: any) => api.post<Task>('/tasks', taskData);
-export const updateTask = (id: string, taskData: any) => api.put<Task>(`/tasks/${id}`, taskData);
+export type CreateTaskPayload = { title: string; description?: string; priority: Task["priority"] };
+export type UpdateTaskPayload = Partial<Pick<Task, "status" | "title" | "description" | "priority" | "dueDate" | "aiInsights">>;
+
+export const createTask = (taskData: CreateTaskPayload) => api.post<Task>('/tasks', taskData);
+export const updateTask = (id: string, taskData: UpdateTaskPayload) => api.put<Task>(`/tasks/${id}`, taskData);
 export const deleteTask = (id: string) => api.delete(`/tasks/${id}`);

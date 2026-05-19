@@ -1,15 +1,16 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 
 export const ChatBot = () => {
   const [message, setMessage] = useState("");
-  const [chat, setChat] = useState<any[]>([]);
+  type ChatItem = { role: "user" | "bot"; text: string };
+  const [chat, setChat] = useState<ChatItem[]>([]);
   const [loading, setLoading] = useState(false);
 
   const sendMessage = async () => {
     if (!message.trim()) return;
 
-    const userMsg = { role: "user", text: message };
+    const userMsg: ChatItem = { role: "user", text: message };
     setChat((prev) => [...prev, userMsg]);
 
     setLoading(true);
@@ -19,7 +20,7 @@ export const ChatBot = () => {
         message,
       });
 
-      const botMsg = {
+      const botMsg: ChatItem = {
         role: "bot",
         text: res.data.reply,
       };

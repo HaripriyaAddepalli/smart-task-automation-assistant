@@ -1,0 +1,50 @@
+services:
+  # Node/Express backend service
+  - type: web
+    name: smart-task-backend
+    env: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false # Set in Render dashboard (e.g. MongoDB Atlas URI)
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: smart-task-redis
+          property: connectionString
+      - key: GROQ_API_KEY
+        sync: false # Set in Render dashboard (Groq AI Key)
+      - key: FRONTEND_URL
+        sync: false # Set in Render dashboard (Vercel Frontend URL)
+      - key: GOOGLE_APPLICATION_CREDENTIALS
+        value: /var/run/secrets/firebase-credentials.json
+      # Optional integrations (can be left blank if unused)
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_WHATSAPP_FROM
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: EMAIL
+        sync: false
+      - key: EMAIL_PASS
+        sync: false
+
+  # Redis service for caching AI priority queries
+  - type: redis
+    name: smart-task-redis
+    plan: free
+    ipAllowList: [] # RESTRICT access only to our internal backend web service

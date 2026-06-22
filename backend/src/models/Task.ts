@@ -1,4 +1,10 @@
-import { Schema, model, Document } from "mongoose";
+import { Schema, model, Document, Types } from "mongoose";
+
+export interface ISubtask {
+  title: string;
+  estimatedMinutes: number;
+  completed: boolean;
+}
 
 export interface ITask extends Document {
   title: string;
@@ -7,9 +13,23 @@ export interface ITask extends Document {
   priority: "low" | "medium" | "high";
   dueDate?: Date;
   aiInsights?: string;
+  userId: string;
+  workspaceId?: Types.ObjectId;
+  subtasks?: ISubtask[];
+  priorityScore?: number;
+  priorityLabel?: "Urgent" | "High" | "Medium" | "Low";
   createdAt: Date;
   updatedAt: Date;
 }
+
+const subtaskSchema = new Schema<ISubtask>(
+  {
+    title: { type: String, required: true },
+    estimatedMinutes: { type: Number, default: 30 },
+    completed: { type: Boolean, default: false },
+  },
+  { _id: false }
+);
 
 const taskSchema = new Schema<ITask>(
   {
@@ -27,9 +47,16 @@ const taskSchema = new Schema<ITask>(
     },
     dueDate: { type: Date },
     aiInsights: { type: String },
+    userId: { type: String, required: true, index: true },
+    workspaceId: { type: Schema.Types.ObjectId, ref: "Workspace", index: true },
+    subtasks: { type: [subtaskSchema], default: [] },
+    priorityScore: { type: Number },
+    priorityLabel: {
+      type: String,
+      enum: ["Urgent", "High", "Medium", "Low"],
+    },
   },
   { timestamps: true }
 );
 
-// ✅ FIX IS HERE (IMPORTANT)
 export default model<ITask>("Task", taskSchema);

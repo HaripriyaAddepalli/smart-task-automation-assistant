@@ -1,59 +1,33 @@
 import express from "express";
-import bcrypt from "bcryptjs";
-import * as jwt from "jsonwebtoken";
+import User from "../models/User";
+import { asyncHandler } from "../middleware/asyncHandler";
 const router = express.Router();
 
-// temporary storage (later MongoDB)
-const users: any[] = [];
+/* ---------------- GOOGLE LOGIN - Persist User to DB ---------------- */
+router.post("/google", asyncHandler(async (req, res) => {
+  const { uid, email, name, photoURL } = req.body;
 
-/* ---------------- SIGN UP ---------------- */
-router.post("/signup", async (req, res) => {
-  const { email, password } = req.body;
+  if (!uid || !email) {
+    return res.status(400).json({ error: "Missing uid or email" });
+  }
 
-  const hashed = await bcrypt.hash(password, 10);
-
-  users.push({ email, password: hashed });
-
-  res.json({ message: "User created" });
-});
-
-/* ---------------- LOGIN ---------------- */
-router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-
-  const user = users.find((u) => u.email === email);
-
+  let user = await User.findOne({ firebaseUid: uid });
   if (!user) {
-    return res.status(400).json({ error: "User not found" });
-  }
-
-  const isValid = await bcrypt.compare(password, user.password);
-
-  if (!isValid) {
-    return res.status(400).json({ error: "Invalid password" });
-  }
-
-  const token = jwt.sign({ email }, "SECRET_KEY", { expiresIn: "1d" });
-
-  res.json({ token });
-});
-
-/* ---------------- GOOGLE LOGIN ---------------- */
-router.post("/google", async (req, res) => {
-  try {
-    const { name, email, photo, uid } = req.body;
-
-    console.log("Google User Received:", req.body);
-
-    // TODO: later save to MongoDB
-
-    res.json({
-      message: "User received successfully",
-      user: { name, email, photo, uid },
+    user = await User.create({
+      firebaseUid: uid,
+      email,
+      displayName: name,
     });
-  } catch (error) {
-    res.status(500).json({ error: "Server error" });
   }
-});
+
+  res.json({
+    message: "User created/updated successfully",
+    user: {
+      uid: user._id,
+      firebaseUid: user.firebaseUid,
+      email: user.email,
+    },
+  });
+}));
 
 export default router;

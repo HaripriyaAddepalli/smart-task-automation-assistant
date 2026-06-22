@@ -2,7 +2,12 @@ import { useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import RequireAuth from "./auth/RequireAuth";
 import { Dashboard } from "./pages/Dashboard";
+import { WorkspaceSwitcher } from "./pages/WorkspaceSwitcher";
+import { Settings } from "./pages/Settings";
+import { Landing } from "./pages/Landing";
+import { Onboarding } from "./pages/Onboarding";
 import Login from "./pages/Login";
+
 
 function App() {
   useEffect(() => {
@@ -23,16 +28,49 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route
-            path="/"
+            path="/onboarding"
+            element={
+              <RequireAuth>
+                <Onboarding />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/workspaces"
+            element={
+              <RequireAuth>
+                <WorkspaceSwitcher />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <RequireAuth>
+                <Settings />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/dashboard"
             element={
               <RequireAuth>
                 <Dashboard />
               </RequireAuth>
             }
           />
-          <Route path="*" element={<Login />} />
+          <Route
+            path="/home"
+            element={
+              <RequireAuth>
+                <Dashboard />
+              </RequireAuth>
+            }
+          />
+          <Route path="*" element={<Landing />} />
         </Routes>
       </BrowserRouter>
     </div>

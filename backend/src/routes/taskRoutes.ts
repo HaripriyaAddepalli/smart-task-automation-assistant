@@ -3,21 +3,36 @@ import {
   createTask,
   getTasks,
   getTaskById,
+  updateTask,
   deleteTask,
+  applyPrioritization,
 } from "../controllers/taskController";
+import { validate } from "../middleware/validate";
+import { subscriptionGuard } from "../middleware/subscriptionGuard";
+import { z } from "zod";
 
 const router = express.Router();
 
-// CREATE
-router.post("/", createTask);
+const ApplyPrioritizationSchema = z.object({
+  prioritizedTasks: z.array(
+    z.object({
+      title: z.string(),
+      description: z.string().optional(),
+      dueDate: z.string().datetime(),
+      priorityLabel: z.enum(["Urgent", "High", "Medium", "Low"]),
+      priorityScore: z.number().int(),
+      subtasks: z.array(
+        z.object({ title: z.string(), estimatedMinutes: z.number().int() })
+      ),
+    })
+  ),
+});
 
-// GET ALL
+router.post("/", subscriptionGuard("tasks"), createTask);
 router.get("/", getTasks);
-
-// GET ONE
 router.get("/:id", getTaskById);
-
-// DELETE
+router.put("/:id", updateTask);
 router.delete("/:id", deleteTask);
+router.post("/apply-prioritization", validate(ApplyPrioritizationSchema, "body"), applyPrioritization);
 
 export default router;

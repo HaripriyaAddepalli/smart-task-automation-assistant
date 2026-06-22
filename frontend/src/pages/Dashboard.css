@@ -9,16 +9,47 @@
 .header {
   text-align: center;
   margin-bottom: 40px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
 }
 
 .header h1 {
-  font-size: 2.5rem;
-  color: #4f46e5;
-  margin-bottom: 8px;
+  font-size: 2rem;
+  margin: 0;
 }
 
-.header p {
-  color: #666;
+.header-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.header-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.header-button:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* INPUT SECTION */

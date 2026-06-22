@@ -1,24 +1,17 @@
-# Backend Dockerfile - Production Build
 FROM node:20-alpine
-
 WORKDIR /app
 
-# Copy package files
+# Install ALL deps (including devDependencies for tsc)
 COPY package.json package-lock.json ./
+RUN npm ci
 
-# Install dependencies
-RUN npm ci --only=production
-
-# Copy source code
-COPY dist ./dist
+# Copy source and compile TypeScript
+COPY tsconfig.json ./
 COPY src ./src
+RUN npm run build
 
-# Expose port
+# Remove dev dependencies
+RUN npm prune --production
+
 EXPOSE 5000
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:5000/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
-
-# Start application
 CMD ["node", "dist/index.js"]

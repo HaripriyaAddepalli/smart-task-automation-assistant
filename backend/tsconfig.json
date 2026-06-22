@@ -6,14 +6,9 @@
     "outDir": "./dist",
     "strict": true,
     "esModuleInterop": true,
-    "moduleResolution": "node",
     "skipLibCheck": true,
     "resolveJsonModule": true
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "src/**/__tests__/**"
-  ]
+  "include": ["src"],
+  "exclude": ["src/**/__tests__/**"]
 }
